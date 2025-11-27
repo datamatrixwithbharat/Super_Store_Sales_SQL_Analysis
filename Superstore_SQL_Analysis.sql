@@ -78,12 +78,13 @@ ORDER BY year_, month_num;
 SELECT 
 	state,
     YEAR(order_date) AS year_,
-    SUM(sales) AS revenue
+    SUM(sales) AS revenue,
+    RANK() OVER(ORDER BY SUM(sales) DESC) AS rank_by_revenue
 FROM sales
 GROUP BY state, year_
-ORDER BY year_, state;
+ORDER BY rank_by_revenue;
 
--- 4. revenue per customer 2011-2014
+-- 4. revenue per customer for all years
 SELECT
 	customer_name,
     SUM(sales) AS revenue_generated
@@ -91,15 +92,68 @@ FROM sales
 GROUP BY customer_name
 ORDER BY revenue_generated DESC;
 
--- 5. total orders per customer 2011-2025
+-- 5. total orders per customer for all years
 SELECT 
 	customer_name,
-    COUNT(order_id) AS total_visits
+    COUNT(order_id) AS total_orders
 FROM sales
 GROUP BY customer_name
-ORDER BY total_visits DESC;
+ORDER BY total_orders DESC;
 
--- 6. NEW QUERY
+-- 6. total no.of distinct customers
+SELECT
+	COUNT(DISTINCT(customer_id)) AS Total_customers
+FROM sales;
 
+-- 7. customer first order and total orders for all years
+SELECT
+	customer_id,
+    customer_name,
+    COUNT(order_id) AS total_orders,
+    MIN(order_date) AS first_order_date
+FROM sales
+GROUP BY customer_id, customer_name
+ORDER BY total_orders DESC;
 
-select * from sales
+-- 8. top 3 states by revenue
+SELECT
+	state,
+    ROUND(SUM(sales),2) AS revenue
+FROM sales
+GROUP BY state
+ORDER BY revenue DESC
+LIMIT 3;
+
+-- 9. top 3 products by revenue
+SELECT
+	product_id,
+    product_name,
+    ROUND(SUM(sales),2) AS revenue
+FROM sales
+GROUP BY product_id, product_name
+ORDER BY revenue DESC
+LIMIT 3;
+
+-- 10. finding if customers buying same product
+SELECT
+    customer_id,
+    customer_name,
+    product_id,
+    product_name,
+    COUNT(product_name) AS times_bought
+FROM sales
+GROUP BY customer_id, customer_name, product_id, product_name
+HAVING COUNT(*) > 1
+ORDER BY times_bought DESC;
+
+-- 11. top 10 customers with rank by sales
+SELECT
+	customer_id,
+    customer_name,
+    ROUND(SUM(sales), 2) AS revenue,
+    RANK() OVER(ORDER BY SUM(sales) DESC) AS rank_by_revenue
+FROM sales
+GROUP BY customer_id, customer_name
+ORDER BY rank_by_revenue
+LIMIT 10;
+
