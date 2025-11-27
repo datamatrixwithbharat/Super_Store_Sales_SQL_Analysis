@@ -59,7 +59,7 @@ SELECT * FROM sales;	# now the dataset is ready for analysis
 -- 1. Revenue per year ordered by year
 SELECT 
 	YEAR(order_date) AS period, 
-    ROUND(SUM(sales * quantity), 2) AS revenue 
+    ROUND(SUM(sales), 2) AS revenue 
 FROM sales
 GROUP BY period 
 ORDER BY period;
@@ -69,7 +69,7 @@ SELECT
 	YEAR(order_date) AS year_, 
     month(order_date) AS month_num, 
     MONTHNAME(order_date) AS month_, 
-    ROUND(SUM(sales * quantity), 2) AS revenue 
+    ROUND(SUM(sales), 2) AS revenue 
 FROM sales
 GROUP BY year_, month_num, month_ 
 ORDER BY year_, month_num;
@@ -78,7 +78,7 @@ ORDER BY year_, month_num;
 SELECT 
 	state,
     YEAR(order_date) AS year_,
-    SUM(sales * quantity) AS revenue
+    SUM(sales) AS revenue
 FROM sales
 GROUP BY state, year_
 ORDER BY year_, state;
@@ -86,7 +86,7 @@ ORDER BY year_, state;
 -- 4. revenue per customer 2011-2014
 SELECT
 	customer_name,
-    SUM(sales * quantity) AS revenue_generated
+    SUM(sales) AS revenue_generated
 FROM sales
 GROUP BY customer_name
 ORDER BY revenue_generated DESC;
@@ -100,3 +100,6 @@ GROUP BY customer_name
 ORDER BY total_visits DESC;
 
 -- 6. NEW QUERY
+
+
+select * from sales
